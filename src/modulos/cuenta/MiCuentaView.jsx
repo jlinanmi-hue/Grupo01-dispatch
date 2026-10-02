@@ -137,7 +137,17 @@ export default function MiCuentaView({ operador, onUpdateOperador }) {
         <div className="cuenta-hero-banner"></div>
         <div className="cuenta-hero-content">
           <div className="cuenta-avatar-box">
-            <div className="cuenta-avatar-circle">
+            <img
+              src="/user-avatar.png"
+              alt="Avatar de usuario"
+              className="cuenta-avatar-img"
+              onError={(e) => {
+                e.target.style.display = "none";
+                const fallback = e.target.nextElementSibling;
+                if (fallback) fallback.style.display = "flex";
+              }}
+            />
+            <div className="cuenta-avatar-circle" style={{ display: "none" }}>
               {formData.nombre.charAt(0).toUpperCase()}
             </div>
             <span className="cuenta-avatar-badge-online" title="Sesión activa"></span>

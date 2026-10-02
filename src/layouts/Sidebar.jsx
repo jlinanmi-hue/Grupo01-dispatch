@@ -389,8 +389,11 @@ export default function Sidebar({
               {!isCollapsed && <span className="nav-text">Reportes</span>}
             </button>
           </div>
+        </nav>
 
-          {/* 9. MI CUENTA */}
+        {/* SECCIÓN INFERIOR ANCLADA: MI CUENTA Y PERFIL */}
+        <div className="sidebar-bottom-anchor">
+          {/* BOTÓN MI CUENTA ANCLADO AL PIE */}
           <div className="sidebar-item-wrapper">
             <button
               className={`sidebar-nav-item ${
@@ -415,64 +418,64 @@ export default function Sidebar({
               {!isCollapsed && <span className="nav-text">Mi Cuenta</span>}
             </button>
           </div>
-        </nav>
 
-        {/* PIE DE PERFIL / USUARIO */}
-        <div className="sidebar-profile-section">
-          <div
-            className={`sidebar-user-card sidebar-user-card-clickable ${
-              activeTab === "cuenta" ? "active" : ""
-            }`}
-            title="Ver Mi Cuenta y Perfil"
-            onClick={() => handleTabClick("cuenta")}
-          >
-            <div className="sidebar-user-avatar-wrapper">
-              <img
-                src="/user-avatar.png"
-                alt="Avatar"
-                className="sidebar-user-img"
-                onError={(e) => {
-                  e.target.style.display = "none";
-                  e.target.nextSibling.style.display = "flex";
-                }}
-              />
-              <div className="sidebar-avatar-fallback" style={{ display: "none" }}>
-                {operador?.nombre ? operador.nombre.charAt(0).toUpperCase() : "J"}
-              </div>
-            </div>
-
-            {!isCollapsed && (
-              <div className="sidebar-user-meta">
-                <strong className="sidebar-user-name">
-                  {operador?.nombre || "Juan Guzman"}
-                </strong>
-                <span className="sidebar-user-role">
-                  {operador?.rol || "Administrador"}
-                </span>
-              </div>
-            )}
-
-            <button
-              className="sidebar-logout-btn"
-              onClick={(e) => {
-                e.stopPropagation();
-                onLogout();
-              }}
-              title="Cerrar sesión"
+          {/* PERFIL DE USUARIO Y LOGOUT */}
+          <div className="sidebar-profile-section">
+            <div
+              className={`sidebar-user-card sidebar-user-card-clickable ${
+                activeTab === "cuenta" ? "active" : ""
+              }`}
+              title="Ver Mi Cuenta y Perfil"
+              onClick={() => handleTabClick("cuenta")}
             >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+              <div className="sidebar-user-avatar-wrapper">
+                <img
+                  src="/user-avatar.png"
+                  alt="Avatar"
+                  className="sidebar-user-img"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "flex";
+                  }}
+                />
+                <div className="sidebar-avatar-fallback" style={{ display: "none" }}>
+                  {operador?.nombre ? operador.nombre.charAt(0).toUpperCase() : "J"}
+                </div>
+              </div>
+
+              {!isCollapsed && (
+                <div className="sidebar-user-meta">
+                  <strong className="sidebar-user-name">
+                    {operador?.nombre || "Juan Guzman"}
+                  </strong>
+                  <span className="sidebar-user-role">
+                    {operador?.rol || "Administrador"}
+                  </span>
+                </div>
+              )}
+
+              <button
+                className="sidebar-logout-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onLogout();
+                }}
+                title="Cerrar sesión"
               >
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <polyline points="16 17 21 12 16 7" />
-                <line x1="21" y1="12" x2="9" y2="12" />
-              </svg>
-            </button>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </aside>
