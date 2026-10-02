@@ -7,6 +7,7 @@ import OperacionesView from "../modulos/operaciones/OperacionesView";
 import MapasView from "../modulos/mapas/MapasView";
 import OperadoresView from "../modulos/operadores/OperadoresView";
 import EquiposView from "../modulos/equipos/EquiposView";
+import MantenimientoView from "../modulos/mantenimiento/MantenimientoView";
 import ReportesView from "../modulos/reportes/ReportesView";
 import "../styles/Menu.css";
 
@@ -130,11 +131,10 @@ export default function Menu() {
       {activeTab === "equipos" && (
         <EquiposView
           filterType={subOption || "todos"}
-          onSelectEquipo={(_codigo) => {
-            // Actualiza equipo activo
-          }}
         />
       )}
+
+      {activeTab === "mantenimiento" && <MantenimientoView />}
 
       {activeTab === "reportes" && (
         <ReportesView initialCategory={subOption || "todos"} />

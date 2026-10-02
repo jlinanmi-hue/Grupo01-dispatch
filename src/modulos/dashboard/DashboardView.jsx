@@ -355,6 +355,74 @@ export default function DashboardView({ onNavigate }) {
         </div>
       </div>
 
+      {/* ALERTA Y VERSUS DE MANTENIMIENTO: PREVENTIVO VS CORRECTIVO */}
+      <div className="dash-panel dashboard-maintenance-versus-card" style={{ marginTop: "24px" }}>
+        <div className="panel-title-bar">
+          <div className="panel-title-group">
+            <h3>Mantenimiento de Flota: Preventivos vs. Correctivos (Mes Actual)</h3>
+            <span className="badge-live-alert">⚠️ Alerta de Incidentes Activos</span>
+          </div>
+          <button
+            type="button"
+            className="btn-view-module-link"
+            onClick={() => onNavigate("mantenimiento")}
+          >
+            Ver Módulo de Mantenimiento →
+          </button>
+        </div>
+
+        <div className="dash-mant-versus-content">
+          <div className="dash-mant-summary-chips">
+            <div className="mant-chip-metric prev">
+              <span className="chip-icon">📅</span>
+              <div>
+                <strong>5 Preventivos (63%)</strong>
+                <span>Rutinas programadas por horómetro</span>
+              </div>
+            </div>
+
+            <div className="mant-chip-metric corr">
+              <span className="chip-icon">⚡</span>
+              <div>
+                <strong>3 Correctivos (37%)</strong>
+                <span>Fallas mecánicas reportadas</span>
+              </div>
+            </div>
+
+            <div className="mant-chip-incident-alert">
+              <span className="alert-pulse-circle"></span>
+              <div>
+                <strong>Incidente Activo en Mina:</strong>
+                <span>ECV-141: Baja de presión de neumático en Rampa Principal</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="dash-versus-progress-wrapper">
+            <div className="dash-versus-bar">
+              <div
+                className="dash-bar-prev"
+                style={{ width: "63%" }}
+                title="63% Preventivo"
+              >
+                63% Preventivo (5)
+              </div>
+              <div
+                className="dash-bar-corr"
+                style={{ width: "37%" }}
+                title="37% Correctivo"
+              >
+                37% Correctivo (3)
+              </div>
+            </div>
+            <div className="dash-versus-labels">
+              <span>Meta de Confiabilidad: &gt; 70% Preventivo</span>
+              <span className="text-warning-bold">2 equipos en taller actualmente</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* ACCESO RÁPIDO Y TELEMETRÍA DE FRENTES */}
       <div className="dashboard-split-row" style={{ marginTop: "24px" }}>
         <div className="dash-panel">
@@ -409,6 +477,20 @@ export default function DashboardView({ onNavigate }) {
               <div>
                 <strong>Registrar Ciclo de Acarreo</strong>
                 <span>Mapeo Origen → Carga → Destino</span>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              className="quick-card-btn orange"
+              onClick={() => onNavigate("mantenimiento")}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+              </svg>
+              <div>
+                <strong>Gestión de Mantenimiento</strong>
+                <span>Preventivos & Incidentes Correctivos</span>
               </div>
             </button>
 
