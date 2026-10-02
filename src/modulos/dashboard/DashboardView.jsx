@@ -1,17 +1,38 @@
-import { useState, useEffect } from "react";
-import MantenimientoView from "../mantenimiento/MantenimientoView";
+import { useState } from "react";
 
-export default function DashboardView({ onNavigate, initialSection = "operaciones" }) {
-  const [seccionActiva, setSeccionActiva] = useState(initialSection || "operaciones");
+export default function DashboardView({ onNavigate }) {
   const [periodoSeleccionado, setPeriodoSeleccionado] = useState("semana");
+  const [filtroPeriodoVersus, setFiltroPeriodoVersus] = useState("mes");
   const [hoveredBar, setHoveredBar] = useState(null);
   const [hoveredSlice, setHoveredSlice] = useState(null);
 
-  useEffect(() => {
-    if (initialSection) {
-      setSeccionActiva(initialSection);
+  // Cargar órdenes para estadísticas en tiempo real
+  const [ordenes] = useState(() => {
+    try {
+      const stored = localStorage.getItem("ordenes_mantenimiento_dispatch");
+      if (stored) return JSON.parse(stored);
+    } catch {
+      // fallback
     }
-  }, [initialSection]);
+    return [
+      { id: "OT-PREV-101", tipo: "preventivo", estado: "En Taller" },
+      { id: "OT-PREV-102", tipo: "preventivo", estado: "Programado" },
+      { id: "OT-PREV-103", tipo: "preventivo", estado: "Programado" },
+      { id: "OT-PREV-104", tipo: "preventivo", estado: "Completado" },
+      { id: "OT-PREV-105", tipo: "preventivo", estado: "Completado" },
+      { id: "OT-PREV-106", tipo: "preventivo", estado: "Programado" },
+      { id: "OT-CORR-141", tipo: "correctivo", estado: "En Reparación" },
+      { id: "OT-CORR-112", tipo: "correctivo", estado: "En Taller" },
+      { id: "OT-CORR-091", tipo: "correctivo", estado: "Completado" },
+    ];
+  });
+
+  const totalPreventivos = ordenes.filter((o) => o.tipo === "preventivo").length;
+  const totalCorrectivos = ordenes.filter((o) => o.tipo === "correctivo").length;
+  const totalOrdenes = ordenes.length || 1;
+  const porcentajePreventivo = Math.round((totalPreventivos / totalOrdenes) * 100);
+  const porcentajeCorrectivo = Math.round((totalCorrectivos / totalOrdenes) * 100);
+  const equiposEnTaller = ordenes.filter((o) => o.estado === "En Taller" || o.estado === "En Reparación").length;
 
   // Datos para Gráfico de Barras: Registros de Despacho por Día
   const datosBarras = [
@@ -64,46 +85,14 @@ export default function DashboardView({ onNavigate, initialSection = "operacione
 
   return (
     <div className="dashboard-view-container">
-      {/* SELECTOR DE SECCIONES DENTRO DEL DASHBOARD */}
-      <div className="dashboard-section-tabs-bar">
-        <button
-          type="button"
-          className={`dashboard-section-tab-btn ${seccionActiva === "operaciones" ? "active" : ""}`}
-          onClick={() => setSeccionActiva("operaciones")}
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-            <path d="M3 3v18h18" />
-            <path d="M18 9l-5 5-4-4-5 5" />
-            <path d="M14 9h4v4" />
-          </svg>
-          <span>Operaciones & Despacho</span>
-        </button>
-
-        <button
-          type="button"
-          className={`dashboard-section-tab-btn ${seccionActiva === "mantenimiento" ? "active" : ""}`}
-          onClick={() => setSeccionActiva("mantenimiento")}
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-          </svg>
-          <span>Mantenimiento & Confiabilidad de Flota</span>
-          <span className="section-tab-badge">Preventivo vs. Correctivo</span>
-        </button>
-      </div>
-
-      {seccionActiva === "mantenimiento" ? (
-        <MantenimientoView isEmbeddedSection={true} />
-      ) : (
-        <>
-          {/* CABECERA */}
-          <div className="view-header">
-            <div>
-              <h2 className="view-title">Dashboard Operativo y Estadísticas</h2>
-              <p className="view-subtitle">
-                Monitoreo en tiempo real de registros diarios, concurrencia y distribución de carga
-              </p>
-            </div>
+      {/* CABECERA */}
+      <div className="view-header">
+        <div>
+          <h2 className="view-title">Dashboard Operativo y Estadísticas Generales</h2>
+          <p className="view-subtitle">
+            Monitoreo en tiempo real de despacho, frentes activos y confiabilidad de flota
+          </p>
+        </div>
 
         {/* SELECTOR DE PERÍODO */}
         <div className="dashboard-periodo-pills">
@@ -395,69 +384,155 @@ export default function DashboardView({ onNavigate, initialSection = "operacione
         </div>
       </div>
 
-      {/* ALERTA Y VERSUS DE MANTENIMIENTO: PREVENTIVO VS CORRECTIVO */}
-      <div className="dash-panel dashboard-maintenance-versus-card" style={{ marginTop: "24px" }}>
-        <div className="panel-title-bar">
-          <div className="panel-title-group">
-            <h3>Mantenimiento de Flota: Preventivos vs. Correctivos (Mes Actual)</h3>
-            <span className="badge-live-alert">⚠️ Alerta de Incidentes Activos</span>
+      {/* ========================================================
+          SECCIÓN DE ESTADÍSTICAS DE FLOTA & CONTROL DE MANTENIMIENTO
+          (Las estadísticas solicitadas van en Dashboard)
+      ======================================================== */}
+      <div className="dashboard-maintenance-section" style={{ marginTop: "32px" }}>
+        <div className="section-title-bar-mantenimiento" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", flexWrap: "wrap", gap: "12px" }}>
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 800, color: "#0F172A" }}>
+                Estadísticas de Flota y Control de Mantenimiento
+              </h3>
+              <span className="badge-live-alert">⚠️ Telemetría de Flota</span>
+            </div>
+            <p style={{ margin: "4px 0 0", fontSize: "12.5px", color: "#64748B" }}>
+              Disponibilidad mecánica, órdenes activas por horómetro y balance técnico de confiabilidad
+            </p>
           </div>
+
           <button
             type="button"
             className="btn-view-module-link"
-            onClick={() => setSeccionActiva("mantenimiento")}
+            onClick={() => onNavigate("mantenimiento")}
+            style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#EFF6FF", border: "1.5px solid #BFDBFE", color: "#1A3BBD", padding: "8px 16px", borderRadius: "10px", fontWeight: 700, fontSize: "13px", cursor: "pointer" }}
           >
-            Ir a Sección de Mantenimiento de Flota →
+            <span>Ver Tabla de Mantenimiento</span>
+            <span>→</span>
           </button>
         </div>
 
-        <div className="dash-mant-versus-content">
-          <div className="dash-mant-summary-chips">
-            <div className="mant-chip-metric prev">
-              <span className="chip-icon">📅</span>
-              <div>
-                <strong>5 Preventivos (63%)</strong>
-                <span>Rutinas programadas por horómetro</span>
-              </div>
+        {/* 1. LAS 5 CARDS KPI SOLICITADAS POR EL USUARIO */}
+        <div className="mantenimiento-kpi-grid" style={{ marginBottom: "20px" }}>
+          <div className="mant-kpi-card">
+            <div className="mant-kpi-header">
+              <span className="mant-kpi-lbl">Total Órdenes</span>
+              <span className="mant-kpi-icon blue">📋</span>
+            </div>
+            <div className="mant-kpi-value">{ordenes.length}</div>
+            <span className="mant-kpi-desc">Gestión integral de flota</span>
+          </div>
+
+          <div className="mant-kpi-card highlight-preventive">
+            <div className="mant-kpi-header">
+              <span className="mant-kpi-lbl">Preventivos Programados</span>
+              <span className="mant-kpi-badge ok">{porcentajePreventivo}% del total</span>
+            </div>
+            <div className="mant-kpi-value text-blue">{totalPreventivos}</div>
+            <span className="mant-kpi-desc">Planificación proactiva por horómetro</span>
+          </div>
+
+          <div className="mant-kpi-card highlight-corrective">
+            <div className="mant-kpi-header">
+              <span className="mant-kpi-lbl">Incidentes Correctivos</span>
+              <span className="mant-kpi-badge warning">{porcentajeCorrectivo}% del total</span>
+            </div>
+            <div className="mant-kpi-value text-orange">{totalCorrectivos}</div>
+            <span className="mant-kpi-desc">Fallas no programadas reportadas</span>
+          </div>
+
+          <div className="mant-kpi-card">
+            <div className="mant-kpi-header">
+              <span className="mant-kpi-lbl">Equipos en Taller</span>
+              <span className="mant-kpi-icon orange">🔧</span>
+            </div>
+            <div className="mant-kpi-value text-dark">{equiposEnTaller}</div>
+            <span className="mant-kpi-desc">Unidades con intervención activa</span>
+          </div>
+
+          <div className="mant-kpi-card">
+            <div className="mant-kpi-header">
+              <span className="mant-kpi-lbl">Disponibilidad Flota</span>
+              <span className="mant-kpi-badge ok">Optimo</span>
+            </div>
+            <div className="mant-kpi-value text-green">91.8%</div>
+            <span className="mant-kpi-desc">Disponibilidad mecánica activa</span>
+          </div>
+        </div>
+
+        {/* 2. EL BALANCE OPERATIVO: PREVENTIVO VS. CORRECTIVO */}
+        <div className="mantenimiento-versus-panel">
+          <div className="versus-header-row">
+            <div>
+              <h3 className="versus-title">
+                Balance Operativo: Preventivo vs. Correctivo
+              </h3>
+              <p className="versus-subtitle">
+                Comparativa de confiabilidad técnica de flota para el control de despacho
+              </p>
             </div>
 
-            <div className="mant-chip-metric corr">
-              <span className="chip-icon">⚡</span>
-              <div>
-                <strong>3 Correctivos (37%)</strong>
-                <span>Fallas mecánicas reportadas</span>
-              </div>
-            </div>
-
-            <div className="mant-chip-incident-alert">
-              <span className="alert-pulse-circle"></span>
-              <div>
-                <strong>Incidente Activo en Mina:</strong>
-                <span>ECV-141: Baja de presión de neumático en Rampa Principal</span>
-              </div>
+            <div className="versus-period-selector">
+              <button
+                type="button"
+                className={`period-toggle-btn ${filtroPeriodoVersus === "mes" ? "active" : ""}`}
+                onClick={() => setFiltroPeriodoVersus("mes")}
+              >
+                Mes Actual
+              </button>
+              <button
+                type="button"
+                className={`period-toggle-btn ${filtroPeriodoVersus === "semana" ? "active" : ""}`}
+                onClick={() => setFiltroPeriodoVersus("semana")}
+              >
+                Esta Semana
+              </button>
             </div>
           </div>
 
-          <div className="dash-versus-progress-wrapper">
-            <div className="dash-versus-bar">
-              <div
-                className="dash-bar-prev"
-                style={{ width: "63%" }}
-                title="63% Preventivo"
-              >
-                63% Preventivo (5)
+          <div className="versus-bar-container">
+            <div className="versus-stats-row">
+              <div className="versus-side preventive">
+                <span className="versus-badge-icon">📅 Preventivo</span>
+                <strong className="versus-count">{totalPreventivos} órdenes ({porcentajePreventivo}%)</strong>
               </div>
-              <div
-                className="dash-bar-corr"
-                style={{ width: "37%" }}
-                title="37% Correctivo"
-              >
-                37% Correctivo (3)
+              <div className="versus-indicator-target">
+                <span>Meta Minera: &gt; 70% Preventivo</span>
+              </div>
+              <div className="versus-side corrective">
+                <strong className="versus-count">{totalCorrectivos} incidentes ({porcentajeCorrectivo}%)</strong>
+                <span className="versus-badge-icon">⚡ Correctivo</span>
               </div>
             </div>
-            <div className="dash-versus-labels">
-              <span>Meta de Confiabilidad: &gt; 70% Preventivo</span>
-              <span className="text-warning-bold">2 equipos en taller actualmente</span>
+
+            <div className="versus-progress-track">
+              <div
+                className="versus-bar-fill preventive-fill"
+                style={{ width: `${porcentajePreventivo}%` }}
+                title={`Preventivo: ${porcentajePreventivo}%`}
+              >
+                {porcentajePreventivo > 15 && `${porcentajePreventivo}%`}
+              </div>
+              <div
+                className="versus-bar-fill corrective-fill"
+                style={{ width: `${porcentajeCorrectivo}%` }}
+                title={`Correctivo: ${porcentajeCorrectivo}%`}
+              >
+                {porcentajeCorrectivo > 15 && `${porcentajeCorrectivo}%`}
+              </div>
+            </div>
+
+            <div className="versus-footer-diagnosis">
+              <div className="diagnosis-pill">
+                <span className="diag-dot"></span>
+                <strong>Diagnóstico de Confiabilidad: </strong>
+                <span>
+                  {porcentajePreventivo >= 70
+                    ? "Flota bajo control preventivo eficiente. Baja tasa de paradas imprevistas en tajo."
+                    : "Alerta: Alto índice de correctivos. Se recomienda adelantar inspecciones periódicas de neumáticos y mangueras."}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -523,14 +598,14 @@ export default function DashboardView({ onNavigate, initialSection = "operacione
             <button
               type="button"
               className="quick-card-btn orange"
-              onClick={() => setSeccionActiva("mantenimiento")}
+              onClick={() => onNavigate("mantenimiento")}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
               </svg>
               <div>
                 <strong>Gestión de Mantenimiento</strong>
-                <span>Preventivos & Incidentes Correctivos</span>
+                <span>Tabla de OTs e incidentes en mina</span>
               </div>
             </button>
 
@@ -569,8 +644,6 @@ export default function DashboardView({ onNavigate, initialSection = "operacione
           </div>
         </div>
       </div>
-    </>
-  )}
-</div>
+    </div>
   );
 }

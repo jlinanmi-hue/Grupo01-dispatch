@@ -9,6 +9,7 @@ import OperadoresView from "../modulos/operadores/OperadoresView";
 import EquiposView from "../modulos/equipos/EquiposView";
 import MantenimientoView from "../modulos/mantenimiento/MantenimientoView";
 import ReportesView from "../modulos/reportes/ReportesView";
+import MiCuentaView from "../modulos/cuenta/MiCuentaView";
 import "../styles/Menu.css";
 
 export default function Menu() {
@@ -23,7 +24,7 @@ export default function Menu() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // Datos del operador
-  const [operador] = useState(() => {
+  const [operador, setOperador] = useState(() => {
     try {
       const stored = localStorage.getItem("operador");
       if (stored) return JSON.parse(stored);
@@ -35,6 +36,8 @@ export default function Menu() {
       rol: "Administrador",
       turno: "Día",
       nin: "70528452",
+      correo: "j.guzman@mina-dispatch.pe",
+      telefono: "+51 987 654 321",
     };
   });
 
@@ -112,10 +115,7 @@ export default function Menu() {
       )}
 
       {activeTab === "dashboard" && (
-        <DashboardView
-          onNavigate={handleNavigate}
-          initialSection={subOption || "operaciones"}
-        />
+        <DashboardView onNavigate={handleNavigate} />
       )}
 
       {activeTab === "operaciones" && (
@@ -137,15 +137,17 @@ export default function Menu() {
         />
       )}
 
-      {activeTab === "mantenimiento" && (
-        <DashboardView
-          onNavigate={handleNavigate}
-          initialSection="mantenimiento"
-        />
-      )}
+      {activeTab === "mantenimiento" && <MantenimientoView />}
 
       {activeTab === "reportes" && (
         <ReportesView initialCategory={subOption || "todos"} />
+      )}
+
+      {activeTab === "cuenta" && (
+        <MiCuentaView
+          operador={operador}
+          onUpdateOperador={setOperador}
+        />
       )}
     </MainLayout>
   );

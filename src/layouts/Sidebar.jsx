@@ -389,11 +389,43 @@ export default function Sidebar({
               {!isCollapsed && <span className="nav-text">Reportes</span>}
             </button>
           </div>
+
+          {/* 9. MI CUENTA */}
+          <div className="sidebar-item-wrapper">
+            <button
+              className={`sidebar-nav-item ${
+                activeTab === "cuenta" ? "active" : ""
+              }`}
+              onClick={() => handleTabClick("cuenta")}
+              title="Mi Cuenta"
+            >
+              <span className="nav-icon">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                  <circle cx="12" cy="7" r="4" />
+                </svg>
+              </span>
+              {!isCollapsed && <span className="nav-text">Mi Cuenta</span>}
+            </button>
+          </div>
         </nav>
 
         {/* PIE DE PERFIL / USUARIO */}
         <div className="sidebar-profile-section">
-          <div className="sidebar-user-card" title="Perfil de usuario">
+          <div
+            className={`sidebar-user-card sidebar-user-card-clickable ${
+              activeTab === "cuenta" ? "active" : ""
+            }`}
+            title="Ver Mi Cuenta y Perfil"
+            onClick={() => handleTabClick("cuenta")}
+          >
             <div className="sidebar-user-avatar-wrapper">
               <img
                 src="/user-avatar.png"
@@ -412,7 +444,7 @@ export default function Sidebar({
             {!isCollapsed && (
               <div className="sidebar-user-meta">
                 <strong className="sidebar-user-name">
-                  {operador?.nombre || "Juan Guzman..."}
+                  {operador?.nombre || "Juan Guzman"}
                 </strong>
                 <span className="sidebar-user-role">
                   {operador?.rol || "Administrador"}
@@ -422,7 +454,10 @@ export default function Sidebar({
 
             <button
               className="sidebar-logout-btn"
-              onClick={onLogout}
+              onClick={(e) => {
+                e.stopPropagation();
+                onLogout();
+              }}
               title="Cerrar sesión"
             >
               <svg

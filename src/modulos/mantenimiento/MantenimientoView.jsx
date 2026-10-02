@@ -189,7 +189,6 @@ export default function MantenimientoView({ isEmbeddedSection = false }) {
   // Filtros de navegación
   const [tabFiltro, setTabFiltro] = useState("todos"); // todos | preventivo | correctivo | taller | completado
   const [busqueda, setBusqueda] = useState("");
-  const [filtroPeriodoVersus, setFiltroPeriodoVersus] = useState("mes"); // mes | semana
 
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
@@ -247,10 +246,6 @@ export default function MantenimientoView({ isEmbeddedSection = false }) {
   // MÉTRICAS Y CÁLCULOS
   const totalPreventivos = ordenes.filter((o) => o.tipo === "preventivo").length;
   const totalCorrectivos = ordenes.filter((o) => o.tipo === "correctivo").length;
-  const totalOrdenes = ordenes.length || 1;
-  const porcentajePreventivo = Math.round((totalPreventivos / totalOrdenes) * 100);
-  const porcentajeCorrectivo = Math.round((totalCorrectivos / totalOrdenes) * 100);
-
   const equiposEnTaller = ordenes.filter((o) => o.estado === "En Taller").length;
   const ordenesCompletadas = ordenes.filter((o) => o.estado === "Completado").length;
 
@@ -302,11 +297,7 @@ export default function MantenimientoView({ isEmbeddedSection = false }) {
       {/* CABECERA PRINCIPAL CON 2 BOTONES DE ACCIÓN */}
       <div className="view-header">
         <div>
-          <h2 className="view-title">
-            {isEmbeddedSection
-              ? "Control de Mantenimiento y Confiabilidad de Flota"
-              : "Gestión de Mantenimiento de Maquinaria"}
-          </h2>
+          <h2 className="view-title">Control de Mantenimiento y Confiabilidad de Flota</h2>
           <p className="view-subtitle">
             Monitoreo técnico de servicios preventivos e incidentes correctivos en tiempo real
           </p>
@@ -344,131 +335,6 @@ export default function MantenimientoView({ isEmbeddedSection = false }) {
             </svg>
             ⚠️ Reportar Incidente (Correctivo)
           </button>
-        </div>
-      </div>
-
-      {/* TARJETAS DE RESUMEN KPI */}
-      <div className="mantenimiento-kpi-grid">
-        <div className="mant-kpi-card">
-          <div className="mant-kpi-header">
-            <span className="mant-kpi-lbl">Total Órdenes</span>
-            <span className="mant-kpi-icon blue">📋</span>
-          </div>
-          <div className="mant-kpi-value">{ordenes.length}</div>
-          <span className="mant-kpi-desc">Gestión integral de flota</span>
-        </div>
-
-        <div className="mant-kpi-card highlight-preventive">
-          <div className="mant-kpi-header">
-            <span className="mant-kpi-lbl">Preventivos Programados</span>
-            <span className="mant-kpi-badge ok">{porcentajePreventivo}% del total</span>
-          </div>
-          <div className="mant-kpi-value text-blue">{totalPreventivos}</div>
-          <span className="mant-kpi-desc">Planificación proactiva por horómetro</span>
-        </div>
-
-        <div className="mant-kpi-card highlight-corrective">
-          <div className="mant-kpi-header">
-            <span className="mant-kpi-lbl">Incidentes Correctivos</span>
-            <span className="mant-kpi-badge warning">{porcentajeCorrectivo}% del total</span>
-          </div>
-          <div className="mant-kpi-value text-orange">{totalCorrectivos}</div>
-          <span className="mant-kpi-desc">Fallas no programadas reportadas</span>
-        </div>
-
-        <div className="mant-kpi-card">
-          <div className="mant-kpi-header">
-            <span className="mant-kpi-lbl">Equipos en Taller</span>
-            <span className="mant-kpi-icon orange">🔧</span>
-          </div>
-          <div className="mant-kpi-value text-dark">{equiposEnTaller}</div>
-          <span className="mant-kpi-desc">Unidades con intervención activa</span>
-        </div>
-
-        <div className="mant-kpi-card">
-          <div className="mant-kpi-header">
-            <span className="mant-kpi-lbl">Disponibilidad Flota</span>
-            <span className="mant-kpi-badge ok">Optimo</span>
-          </div>
-          <div className="mant-kpi-value text-green">91.8%</div>
-          <span className="mant-kpi-desc">Disponibilidad mecánica activa</span>
-        </div>
-      </div>
-
-      {/* SECCIÓN "VERSUS": PREVENTIVOS VS CORRECTIVOS (SOLICITADO POR EL USUARIO) */}
-      <div className="mantenimiento-versus-panel">
-        <div className="versus-header-row">
-          <div>
-            <h3 className="versus-title">
-              Balance Operativo: Preventivo vs. Correctivo
-            </h3>
-            <p className="versus-subtitle">
-              Comparativa de confiabilidad técnica de flota para el control de despacho
-            </p>
-          </div>
-
-          <div className="versus-period-selector">
-            <button
-              type="button"
-              className={`period-toggle-btn ${filtroPeriodoVersus === "mes" ? "active" : ""}`}
-              onClick={() => setFiltroPeriodoVersus("mes")}
-            >
-              Mes Actual
-            </button>
-            <button
-              type="button"
-              className={`period-toggle-btn ${filtroPeriodoVersus === "semana" ? "active" : ""}`}
-              onClick={() => setFiltroPeriodoVersus("semana")}
-            >
-              Esta Semana
-            </button>
-          </div>
-        </div>
-
-        {/* COMPARATIVO VISUAL (BARRA DUAL VERSUS) */}
-        <div className="versus-bar-container">
-          <div className="versus-stats-row">
-            <div className="versus-side preventive">
-              <span className="versus-badge-icon">📅 Preventivo</span>
-              <strong className="versus-count">{totalPreventivos} órdenes ({porcentajePreventivo}%)</strong>
-            </div>
-            <div className="versus-indicator-target">
-              <span>Meta Minera: &gt; 70% Preventivo</span>
-            </div>
-            <div className="versus-side corrective">
-              <strong className="versus-count">{totalCorrectivos} incidentes ({porcentajeCorrectivo}%)</strong>
-              <span className="versus-badge-icon">⚡ Correctivo</span>
-            </div>
-          </div>
-
-          <div className="versus-progress-track">
-            <div
-              className="versus-bar-fill preventive-fill"
-              style={{ width: `${porcentajePreventivo}%` }}
-              title={`Preventivo: ${porcentajePreventivo}%`}
-            >
-              {porcentajePreventivo > 15 && `${porcentajePreventivo}%`}
-            </div>
-            <div
-              className="versus-bar-fill corrective-fill"
-              style={{ width: `${porcentajeCorrectivo}%` }}
-              title={`Correctivo: ${porcentajeCorrectivo}%`}
-            >
-              {porcentajeCorrectivo > 15 && `${porcentajeCorrectivo}%`}
-            </div>
-          </div>
-
-          <div className="versus-footer-diagnosis">
-            <div className="diagnosis-pill">
-              <span className="diag-dot"></span>
-              <strong>Diagnóstico de Confiabilidad: </strong>
-              <span>
-                {porcentajePreventivo >= 70
-                  ? "Flota bajo control preventivo eficiente. Baja tasa de paradas imprevistas en tajo."
-                  : "Alerta: Alto índice de correctivos. Se recomienda adelantar inspecciones periódicas de neumáticos y mangueras."}
-              </span>
-            </div>
-          </div>
         </div>
       </div>
 
