@@ -79,7 +79,7 @@ export default function ModalCorrectivo({
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div
-        className="modal-card-detail modal-registrar-equipo"
+        className="modal-card-detail modal-correctivo-enhanced"
         onClick={(e) => e.stopPropagation()}
       >
         {/* CABECERA CON ESTILO DE ALERTA CORRECTIVA */}
@@ -120,66 +120,87 @@ export default function ModalCorrectivo({
           </span>
         </div>
 
-        {/* FORMULARIO */}
+        {/* FORMULARIO ORGANIZADO */}
         <form onSubmit={handleSubmit} className="modal-form-body">
-          <div className="modal-form-grid">
-            {/* SELECCIÓN DE EQUIPO */}
-            <div className="form-group-item">
-              <label>
-                Equipo Afectado <span className="req">*</span>
-              </label>
-              <select
-                name="equipoCodigo"
-                value={formData.equipoCodigo}
-                onChange={handleChange}
-                className="select-field"
-              >
-                {equiposDisponibles.map((eq) => (
-                  <option key={eq.codigo} value={eq.codigo}>
-                    {eq.codigo} · {eq.marcaModelo} ({eq.categoria})
-                  </option>
-                ))}
-              </select>
-              {equipoSeleccionado && (
-                <small className="field-hint-text">
-                  Horómetro actual: <strong>{equipoSeleccionado.horometro}h</strong>
-                </small>
-              )}
+          {/* SECCIÓN 1: EQUIPO Y COMPONENTE AFECTADO */}
+          <div className="modal-form-section">
+            <div className="modal-section-header">
+              <span className="section-step-num alert-step">1</span>
+              <h4>Equipo Afectado y Falla Técnica</h4>
             </div>
 
-            {/* SISTEMA / COMPONENTE AFECTADO */}
-            <div className="form-group-item">
-              <label>
-                Sistema / Componente con Falla <span className="req">*</span>
-              </label>
-              <select
-                name="componenteAfectado"
-                value={formData.componenteAfectado}
-                onChange={handleChange}
-                className="select-field"
-              >
-                <option value="Neumáticos y Llantas">Neumáticos / Llantas (Baja de presión o rotura)</option>
-                <option value="Sistema Hidráulico">Sistema Hidráulico (Mangueras, cilindro, bomba)</option>
-                <option value="Motor Diesel">Motor Diesel (Temperatura, inyectores, aceite)</option>
-                <option value="Sistema de Frenos">Sistema de Frenos (Retardador, pastillas, aire)</option>
-                <option value="Transmisión y Diferencial">Transmisión / Convertidor / Diferencial</option>
-                <option value="Sistema Eléctrico y Baterías">Sistema Eléctrico / Alternador / Baterías</option>
-                <option value="Estructura y Tolva / Balde">Estructura / Tolva / Balde / Orugas</option>
-              </select>
+            <div className="modal-form-grid">
+              <div className="form-group-item">
+                <label>
+                  Equipo Afectado <span className="req">*</span>
+                </label>
+                <select
+                  name="equipoCodigo"
+                  value={formData.equipoCodigo}
+                  onChange={handleChange}
+                  className="select-field"
+                >
+                  {equiposDisponibles.map((eq) => (
+                    <option key={eq.codigo} value={eq.codigo}>
+                      {eq.codigo} · {eq.marcaModelo} ({eq.categoria})
+                    </option>
+                  ))}
+                </select>
+                {equipoSeleccionado && (
+                  <div className="field-hint-chip">
+                    <span>Horómetro: <strong>{equipoSeleccionado.horometro}h</strong></span>
+                    <span>Categoría: <strong>{equipoSeleccionado.categoria}</strong></span>
+                  </div>
+                )}
+              </div>
+
+              <div className="form-group-item">
+                <label>
+                  Sistema / Componente con Falla <span className="req">*</span>
+                </label>
+                <select
+                  name="componenteAfectado"
+                  value={formData.componenteAfectado}
+                  onChange={handleChange}
+                  className="select-field"
+                >
+                  <option value="Neumáticos y Llantas">Neumáticos / Llantas (Baja de presión o rotura)</option>
+                  <option value="Sistema Hidráulico">Sistema Hidráulico (Mangueras, cilindro, bomba)</option>
+                  <option value="Motor Diesel">Motor Diesel (Temperatura, inyectores, aceite)</option>
+                  <option value="Sistema de Frenos">Sistema de Frenos (Retardador, pastillas, aire)</option>
+                  <option value="Transmisión y Diferencial">Transmisión / Convertidor / Diferencial</option>
+                  <option value="Sistema Eléctrico y Baterías">Sistema Eléctrico / Alternador / Baterías</option>
+                  <option value="Estructura y Tolva / Balde">Estructura / Tolva / Balde / Orugas</option>
+                </select>
+                <span className="field-hint-text">Subsistema crítico afectado</span>
+              </div>
+            </div>
+          </div>
+
+          {/* SECCIÓN 2: OCURRENCIA Y UBICACIÓN */}
+          <div className="modal-form-section">
+            <div className="modal-section-header">
+              <span className="section-step-num alert-step">2</span>
+              <h4>Lugar, Momento y Nivel de Urgencia</h4>
             </div>
 
-            {/* FECHA Y HORA DEL INCIDENTE */}
-            <div className="form-group-item">
-              <label>
-                Fecha y Hora del Suceso <span className="req">*</span>
-              </label>
-              <div className="time-range-row">
+            <div className="modal-form-grid">
+              <div className="form-group-item">
+                <label>
+                  Fecha del Incidente <span className="req">*</span>
+                </label>
                 <input
                   type="date"
                   name="fechaIncidente"
                   value={formData.fechaIncidente}
                   onChange={handleChange}
                 />
+              </div>
+
+              <div className="form-group-item">
+                <label>
+                  Hora del Incidente <span className="req">*</span>
+                </label>
                 <input
                   type="time"
                   name="horaIncidente"
@@ -187,104 +208,121 @@ export default function ModalCorrectivo({
                   onChange={handleChange}
                 />
               </div>
+
+              <div className="form-group-item">
+                <label>
+                  Nivel de Severidad <span className="req">*</span>
+                </label>
+                <select
+                  name="severidad"
+                  value={formData.severidad}
+                  onChange={handleChange}
+                  className="select-field"
+                >
+                  <option value="Crítica (Equipo Inoperativo)">
+                    🔴 Crítica (Equipo Inoperativo / Parado)
+                  </option>
+                  <option value="Alta (Operación Restringida)">
+                    🟠 Alta (Operación Restringida)
+                  </option>
+                  <option value="Media (Requiere Auxilio Pronto)">
+                    🟡 Media (Requiere Auxilio Pronto)
+                  </option>
+                  <option value="Leve (Monitoreo)">
+                    🟢 Leve (Monitoreo en Ruta)
+                  </option>
+                </select>
+              </div>
+
+              <div className="form-group-item">
+                <label>Tiempo Estimado de Reparación</label>
+                <input
+                  type="text"
+                  name="tiempoEstimado"
+                  value={formData.tiempoEstimado}
+                  onChange={handleChange}
+                  placeholder="Ej. 1.5 horas, 2 horas, 1 turno"
+                />
+              </div>
+
+              <div className="form-group-item full-width">
+                <label>
+                  Ubicación Exacta en Mina <span className="req">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="ubicacionFalla"
+                  placeholder="Ej. Rampa Principal Km 3.2, Frente Carguío B, Botadero 1..."
+                  value={formData.ubicacionFalla}
+                  onChange={handleChange}
+                  className={errores.ubicacionFalla ? "input-error" : ""}
+                />
+                {errores.ubicacionFalla && (
+                  <span className="err-msg">{errores.ubicacionFalla}</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* SECCIÓN 3: AUXILIO MECÁNICO */}
+          <div className="modal-form-section">
+            <div className="modal-section-header">
+              <span className="section-step-num alert-step">3</span>
+              <h4>Despacho de Auxilio Mecánico</h4>
             </div>
 
-            {/* SEVERIDAD */}
-            <div className="form-group-item">
-              <label>
-                Nivel de Severidad <span className="req">*</span>
-              </label>
-              <select
-                name="severidad"
-                value={formData.severidad}
-                onChange={handleChange}
-                className="select-field"
-              >
-                <option value="Crítica (Equipo Inoperativo)">
-                  🔴 Crítica (Equipo Inoperativo / Parado)
-                </option>
-                <option value="Alta (Operación Restringida)">
-                  🟠 Alta (Operación Restringida)
-                </option>
-                <option value="Media (Requiere Auxilio Pronto)">
-                  🟡 Media (Requiere Auxilio Pronto)
-                </option>
-                <option value="Leve (Monitoreo)">
-                  🟢 Leve (Monitoreo en Ruta)
-                </option>
-              </select>
+            <div className="modal-form-grid">
+              <div className="form-group-item full-width">
+                <label>Cuadrilla / Mecánico de Auxilio en Mina</label>
+                <input
+                  type="text"
+                  name="cuadrillaAuxilio"
+                  value={formData.cuadrillaAuxilio}
+                  onChange={handleChange}
+                  placeholder="Ej. Unidad de Auxilio Mecánico 02 (Mec. Raúl Soto)"
+                  className="input-prominent"
+                />
+                <span className="field-hint-text">Personal técnico desplazado al punto del incidente</span>
+              </div>
+            </div>
+          </div>
+
+          {/* SECCIÓN 4: DESCRIPCIÓN Y MEDIDAS DE SEGURIDAD */}
+          <div className="modal-form-section">
+            <div className="modal-section-header">
+              <span className="section-step-num alert-step">4</span>
+              <h4>Descripción Técnica y Protocolo de Seguridad</h4>
             </div>
 
-            {/* UBICACIÓN EXACTA EN MINA */}
-            <div className="form-group-item full-width">
-              <label>
-                Ubicación del Incidente en Mina <span className="req">*</span>
-              </label>
-              <input
-                type="text"
-                name="ubicacionFalla"
-                placeholder="Ej. Rampa Principal Km 3.2, Frente Carguío B, Botadero 1..."
-                value={formData.ubicacionFalla}
-                onChange={handleChange}
-                className={errores.ubicacionFalla ? "input-error" : ""}
-              />
-              {errores.ubicacionFalla && (
-                <span className="err-msg">{errores.ubicacionFalla}</span>
-              )}
-            </div>
+            <div className="modal-form-grid">
+              <div className="form-group-item full-width">
+                <label>
+                  Descripción del Incidente / Falla <span className="req">*</span>
+                </label>
+                <textarea
+                  name="descripcionFalla"
+                  rows={3}
+                  value={formData.descripcionFalla}
+                  onChange={handleChange}
+                  className={`textarea-field ${errores.descripcionFalla ? "input-error" : ""}`}
+                  placeholder="Detalla lo que ocurrió (ej. se bajó la llanta posterior, corte de roca en ruta, fuga de fluido hidráulico...)"
+                />
+                {errores.descripcionFalla && (
+                  <span className="err-msg">{errores.descripcionFalla}</span>
+                )}
+              </div>
 
-            {/* DESCRIPCIÓN DE LA FALLA */}
-            <div className="form-group-item full-width">
-              <label>
-                Descripción del Incidente / Falla <span className="req">*</span>
-              </label>
-              <textarea
-                name="descripcionFalla"
-                rows={3}
-                value={formData.descripcionFalla}
-                onChange={handleChange}
-                className={`textarea-field ${errores.descripcionFalla ? "input-error" : ""}`}
-                placeholder="Detalla lo que ocurrió (ej. se bajó la llanta, pérdida de potencia, fuga de fluido...)"
-              />
-              {errores.descripcionFalla && (
-                <span className="err-msg">{errores.descripcionFalla}</span>
-              )}
-            </div>
-
-            {/* CUADRILLA ASIGNADA */}
-            <div className="form-group-item">
-              <label>Cuadrilla / Mecánico de Auxilio</label>
-              <input
-                type="text"
-                name="cuadrillaAuxilio"
-                value={formData.cuadrillaAuxilio}
-                onChange={handleChange}
-                placeholder="Ej. Unidad de Auxilio Rápido 02"
-              />
-            </div>
-
-            {/* TIEMPO ESTIMADO */}
-            <div className="form-group-item">
-              <label>Tiempo Estimado de Reparación</label>
-              <input
-                type="text"
-                name="tiempoEstimado"
-                value={formData.tiempoEstimado}
-                onChange={handleChange}
-                placeholder="Ej. 1 hora, 2 horas, 4 horas"
-              />
-            </div>
-
-            {/* ACCIÓN INMEDIATA */}
-            <div className="form-group-item full-width">
-              <label>Acción Inmediata de Seguridad Tomada</label>
-              <input
-                type="text"
-                name="accionInmediata"
-                value={formData.accionInmediata}
-                onChange={handleChange}
-                placeholder="Ej. Máquina parqueada con tacos y conos, personal evacuado de la línea de fuego"
-              />
+              <div className="form-group-item full-width">
+                <label>Acción Inmediata de Seguridad Tomada</label>
+                <textarea
+                  name="accionInmediata"
+                  rows={2}
+                  value={formData.accionInmediata}
+                  onChange={handleChange}
+                  className="textarea-field"
+                  placeholder="Ej. Máquina parqueada a un costado con tacos y conos de señalización colocados, personal seguro..."
+                />
+              </div>
             </div>
           </div>
 

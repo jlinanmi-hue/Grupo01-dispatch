@@ -1,9 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import MantenimientoView from "../mantenimiento/MantenimientoView";
 
-export default function DashboardView({ onNavigate }) {
+export default function DashboardView({ onNavigate, initialSection = "operaciones" }) {
+  const [seccionActiva, setSeccionActiva] = useState(initialSection || "operaciones");
   const [periodoSeleccionado, setPeriodoSeleccionado] = useState("semana");
   const [hoveredBar, setHoveredBar] = useState(null);
   const [hoveredSlice, setHoveredSlice] = useState(null);
+
+  useEffect(() => {
+    if (initialSection) {
+      setSeccionActiva(initialSection);
+    }
+  }, [initialSection]);
 
   // Datos para Gráfico de Barras: Registros de Despacho por Día
   const datosBarras = [
@@ -56,14 +64,46 @@ export default function DashboardView({ onNavigate }) {
 
   return (
     <div className="dashboard-view-container">
-      {/* CABECERA */}
-      <div className="view-header">
-        <div>
-          <h2 className="view-title">Dashboard Operativo y Estadísticas</h2>
-          <p className="view-subtitle">
-            Monitoreo en tiempo real de registros diarios, concurrencia y distribución de carga
-          </p>
-        </div>
+      {/* SELECTOR DE SECCIONES DENTRO DEL DASHBOARD */}
+      <div className="dashboard-section-tabs-bar">
+        <button
+          type="button"
+          className={`dashboard-section-tab-btn ${seccionActiva === "operaciones" ? "active" : ""}`}
+          onClick={() => setSeccionActiva("operaciones")}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <path d="M3 3v18h18" />
+            <path d="M18 9l-5 5-4-4-5 5" />
+            <path d="M14 9h4v4" />
+          </svg>
+          <span>Operaciones & Despacho</span>
+        </button>
+
+        <button
+          type="button"
+          className={`dashboard-section-tab-btn ${seccionActiva === "mantenimiento" ? "active" : ""}`}
+          onClick={() => setSeccionActiva("mantenimiento")}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+          </svg>
+          <span>Mantenimiento & Confiabilidad de Flota</span>
+          <span className="section-tab-badge">Preventivo vs. Correctivo</span>
+        </button>
+      </div>
+
+      {seccionActiva === "mantenimiento" ? (
+        <MantenimientoView isEmbeddedSection={true} />
+      ) : (
+        <>
+          {/* CABECERA */}
+          <div className="view-header">
+            <div>
+              <h2 className="view-title">Dashboard Operativo y Estadísticas</h2>
+              <p className="view-subtitle">
+                Monitoreo en tiempo real de registros diarios, concurrencia y distribución de carga
+              </p>
+            </div>
 
         {/* SELECTOR DE PERÍODO */}
         <div className="dashboard-periodo-pills">
@@ -365,9 +405,9 @@ export default function DashboardView({ onNavigate }) {
           <button
             type="button"
             className="btn-view-module-link"
-            onClick={() => onNavigate("mantenimiento")}
+            onClick={() => setSeccionActiva("mantenimiento")}
           >
-            Ver Módulo de Mantenimiento →
+            Ir a Sección de Mantenimiento de Flota →
           </button>
         </div>
 
@@ -483,7 +523,7 @@ export default function DashboardView({ onNavigate }) {
             <button
               type="button"
               className="quick-card-btn orange"
-              onClick={() => onNavigate("mantenimiento")}
+              onClick={() => setSeccionActiva("mantenimiento")}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
@@ -529,6 +569,8 @@ export default function DashboardView({ onNavigate }) {
           </div>
         </div>
       </div>
-    </div>
+    </>
+  )}
+</div>
   );
 }

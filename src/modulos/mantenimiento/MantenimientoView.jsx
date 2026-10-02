@@ -3,7 +3,7 @@ import ModalPreventivo from "./ModalPreventivo";
 import ModalCorrectivo from "./ModalCorrectivo";
 import ModalDetalleOrden from "./ModalDetalleOrden";
 
-export default function MantenimientoView() {
+export default function MantenimientoView({ isEmbeddedSection = false }) {
   // 1. Catálogo de equipos disponibles (de localStorage o fallback)
   const equiposDisponibles = useMemo(() => {
     try {
@@ -302,9 +302,13 @@ export default function MantenimientoView() {
       {/* CABECERA PRINCIPAL CON 2 BOTONES DE ACCIÓN */}
       <div className="view-header">
         <div>
-          <h2 className="view-title">Gestión de Mantenimiento de Maquinaria</h2>
+          <h2 className="view-title">
+            {isEmbeddedSection
+              ? "Control de Mantenimiento y Confiabilidad de Flota"
+              : "Gestión de Mantenimiento de Maquinaria"}
+          </h2>
           <p className="view-subtitle">
-            Planificación de mantenimientos preventivos y reporte de incidentes correctivos en tiempo real
+            Monitoreo técnico de servicios preventivos e incidentes correctivos en tiempo real
           </p>
         </div>
 

@@ -78,7 +78,7 @@ export default function ModalPreventivo({
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div
-        className="modal-card-detail modal-registrar-equipo"
+        className="modal-card-detail modal-preventivo-enhanced"
         onClick={(e) => e.stopPropagation()}
       >
         {/* CABECERA */}
@@ -124,164 +124,188 @@ export default function ModalPreventivo({
 
         {/* FORMULARIO */}
         <form onSubmit={handleSubmit} className="modal-form-body">
-          <div className="modal-form-grid">
-            {/* SELECCIÓN DE EQUIPO */}
-            <div className="form-group-item">
-              <label>
-                Seleccionar Máquina / Equipo <span className="req">*</span>
-              </label>
-              <select
-                name="equipoCodigo"
-                value={formData.equipoCodigo}
-                onChange={handleChange}
-                className="select-field"
-              >
-                {equiposDisponibles.map((eq) => (
-                  <option key={eq.codigo} value={eq.codigo}>
-                    {eq.codigo} · {eq.marcaModelo} ({eq.categoria})
+          {/* SECCIÓN 1: ASIGNACIÓN DE UNIDAD Y SERVICIO */}
+          <div className="modal-form-section">
+            <div className="modal-section-header">
+              <span className="section-step-num">1</span>
+              <h4>Selección de Unidad y Tipo de Servicio</h4>
+            </div>
+
+            <div className="modal-form-grid">
+              <div className="form-group-item">
+                <label>
+                  Máquina / Equipo <span className="req">*</span>
+                </label>
+                <select
+                  name="equipoCodigo"
+                  value={formData.equipoCodigo}
+                  onChange={handleChange}
+                  className="select-field"
+                >
+                  {equiposDisponibles.map((eq) => (
+                    <option key={eq.codigo} value={eq.codigo}>
+                      {eq.codigo} · {eq.marcaModelo} ({eq.categoria})
+                    </option>
+                  ))}
+                </select>
+                {equipoSeleccionado && (
+                  <div className="field-hint-chip">
+                    <span>Horómetro: <strong>{equipoSeleccionado.horometro}h</strong></span>
+                    <span>Estado actual: <strong>{equipoSeleccionado.estado}</strong></span>
+                  </div>
+                )}
+              </div>
+
+              <div className="form-group-item">
+                <label>
+                  Rutina / Servicio Preventivo <span className="req">*</span>
+                </label>
+                <select
+                  name="tipoRutina"
+                  value={formData.tipoRutina}
+                  onChange={handleChange}
+                  className="select-field"
+                >
+                  <option value="PM-1 (250 Horas) - Inspección y Lubricación">
+                    PM-1 (250 Horas) - Inspección y Lubricación
                   </option>
-                ))}
-              </select>
-              {equipoSeleccionado && (
-                <small className="field-hint-text">
-                  Horómetro actual: <strong>{equipoSeleccionado.horometro}h</strong> · Estado: {equipoSeleccionado.estado}
-                </small>
-              )}
+                  <option value="PM-2 (500 Horas) - Cambio Aceite y Filtros">
+                    PM-2 (500 Horas) - Cambio Aceite y Filtros
+                  </option>
+                  <option value="PM-3 (1000 Horas) - Mantenimiento Mayor">
+                    PM-3 (1000 Horas) - Mantenimiento Mayor
+                  </option>
+                  <option value="PM-4 (2000 Horas) - Sistema Hidráulico y Transmisión">
+                    PM-4 (2000 Horas) - Sistema Hidráulico y Transmisión
+                  </option>
+                  <option value="Inspección de Orugas, Pines y Mandos Finales">
+                    Inspección de Orugas, Pines y Mandos Finales
+                  </option>
+                  <option value="Overhaul Parcial Programado">
+                    Overhaul Parcial Programado
+                  </option>
+                </select>
+                <span className="field-hint-text">Estándar de mantenimiento por horas de motor</span>
+              </div>
+            </div>
+          </div>
+
+          {/* SECCIÓN 2: PLANIFICACIÓN DE FECHA Y HORARIO */}
+          <div className="modal-form-section">
+            <div className="modal-section-header">
+              <span className="section-step-num">2</span>
+              <h4>Programación de Parada Operativa</h4>
             </div>
 
-            {/* TIPO DE RUTINA */}
-            <div className="form-group-item">
-              <label>
-                Rutina / Servicio Preventivo <span className="req">*</span>
-              </label>
-              <select
-                name="tipoRutina"
-                value={formData.tipoRutina}
-                onChange={handleChange}
-                className="select-field"
-              >
-                <option value="PM-1 (250 Horas) - Inspección y Lubricación">
-                  PM-1 (250 Horas) - Inspección y Lubricación
-                </option>
-                <option value="PM-2 (500 Horas) - Cambio Aceite y Filtros">
-                  PM-2 (500 Horas) - Cambio Aceite y Filtros
-                </option>
-                <option value="PM-3 (1000 Horas) - Mantenimiento Mayor">
-                  PM-3 (1000 Horas) - Mantenimiento Mayor
-                </option>
-                <option value="PM-4 (2000 Horas) - Sistema Hidráulico y Transmisión">
-                  PM-4 (2000 Horas) - Sistema Hidráulico y Transmisión
-                </option>
-                <option value="Inspección de Orugas, Pines y Mandos Finales">
-                  Inspección de Orugas, Pines y Mandos Finales
-                </option>
-                <option value="Overhaul Parcial Programado">
-                  Overhaul Parcial Programado
-                </option>
-              </select>
-            </div>
+            <div className="modal-form-grid">
+              <div className="form-group-item">
+                <label>
+                  Fecha Programada <span className="req">*</span>
+                </label>
+                <input
+                  type="date"
+                  name="fechaProgramada"
+                  value={formData.fechaProgramada}
+                  onChange={handleChange}
+                  className={errores.fechaProgramada ? "input-error" : ""}
+                />
+                {errores.fechaProgramada && (
+                  <span className="err-msg">{errores.fechaProgramada}</span>
+                )}
+              </div>
 
-            {/* FECHA PROGRAMADA */}
-            <div className="form-group-item">
-              <label>
-                Fecha Programada <span className="req">*</span>
-              </label>
-              <input
-                type="date"
-                name="fechaProgramada"
-                value={formData.fechaProgramada}
-                onChange={handleChange}
-                className={errores.fechaProgramada ? "input-error" : ""}
-              />
-              {errores.fechaProgramada && (
-                <span className="err-msg">{errores.fechaProgramada}</span>
-              )}
-            </div>
+              <div className="form-group-item">
+                <label>Taller / Bahía de Trabajo <span className="req">*</span></label>
+                <select
+                  name="tallerBahia"
+                  value={formData.tallerBahia}
+                  onChange={handleChange}
+                  className="select-field"
+                >
+                  <option value="Taller Central - Bahía 1">Taller Central - Bahía 1 (Acarreo)</option>
+                  <option value="Taller Central - Bahía 2">Taller Central - Bahía 2 (Carguío)</option>
+                  <option value="Taller Mina Norte - Bahía Rápida">Taller Mina Norte - Bahía Rápida</option>
+                  <option value="Patio de Mantenimiento Tajo">Patio de Mantenimiento Tajo</option>
+                </select>
+              </div>
 
-            {/* HORARIO (INICIO - FIN) */}
-            <div className="form-group-item">
-              <label>
-                Franja Horaria de Parada <span className="req">*</span>
-              </label>
-              <div className="time-range-row">
+              <div className="form-group-item">
+                <label>
+                  Hora Inicio de Parada <span className="req">*</span>
+                </label>
                 <input
                   type="time"
                   name="horaInicio"
                   value={formData.horaInicio}
                   onChange={handleChange}
-                  title="Hora inicio"
+                  className={errores.horaInicio ? "input-error" : ""}
                 />
-                <span className="time-sep">a</span>
+                {errores.horaInicio && (
+                  <span className="err-msg">{errores.horaInicio}</span>
+                )}
+              </div>
+
+              <div className="form-group-item">
+                <label>
+                  Hora Fin Estimada <span className="req">*</span>
+                </label>
                 <input
                   type="time"
                   name="horaFin"
                   value={formData.horaFin}
                   onChange={handleChange}
-                  title="Hora fin"
                 />
               </div>
-              {errores.horaInicio && (
-                <span className="err-msg">{errores.horaInicio}</span>
-              )}
+            </div>
+          </div>
+
+          {/* SECCIÓN 3: PERSONAL TÉCNICO Y PLAN DE TAREAS */}
+          <div className="modal-form-section">
+            <div className="modal-section-header">
+              <span className="section-step-num">3</span>
+              <h4>Técnico Responsable y Alcance de Trabajo</h4>
             </div>
 
-            {/* TALLER / BAHÍA ASIGNADA */}
-            <div className="form-group-item">
-              <label>Taller / Bahía de Trabajo</label>
-              <select
-                name="tallerBahia"
-                value={formData.tallerBahia}
-                onChange={handleChange}
-                className="select-field"
-              >
-                <option value="Taller Central - Bahía 1">Taller Central - Bahía 1 (Acarreo)</option>
-                <option value="Taller Central - Bahía 2">Taller Central - Bahía 2 (Carguío)</option>
-                <option value="Taller Mina Norte - Bahía Rápida">Taller Mina Norte - Bahía Rápida</option>
-                <option value="Patio de Mantenimiento Tajo">Patio de Mantenimiento Tajo</option>
-              </select>
-            </div>
+            <div className="modal-form-grid">
+              <div className="form-group-item">
+                <label>
+                  Técnico Mecánico Responsable <span className="req">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="tecnicoResponsable"
+                  placeholder="Ej. Ing. Marcos Valdivia"
+                  value={formData.tecnicoResponsable}
+                  onChange={handleChange}
+                  className={errores.tecnicoResponsable ? "input-error" : ""}
+                />
+                {errores.tecnicoResponsable && (
+                  <span className="err-msg">{errores.tecnicoResponsable}</span>
+                )}
+              </div>
 
-            {/* TÉCNICO RESPONSABLE */}
-            <div className="form-group-item">
-              <label>
-                Técnico Mecánico Responsable <span className="req">*</span>
-              </label>
-              <input
-                type="text"
-                name="tecnicoResponsable"
-                placeholder="Ej. Ing. Marcos Valdivia"
-                value={formData.tecnicoResponsable}
-                onChange={handleChange}
-                className={errores.tecnicoResponsable ? "input-error" : ""}
-              />
-              {errores.tecnicoResponsable && (
-                <span className="err-msg">{errores.tecnicoResponsable}</span>
-              )}
-            </div>
+              <div className="form-group-item">
+                <label>Horómetro Proyectado de Servicio</label>
+                <input
+                  type="number"
+                  name="horometroProyectado"
+                  placeholder="Ej. 600 (estimado al entrar al taller)"
+                  value={formData.horometroProyectado}
+                  onChange={handleChange}
+                />
+              </div>
 
-            {/* HORÓMETRO PROYECTADO */}
-            <div className="form-group-item full-width">
-              <label>Horómetro Proyectado de Servicio (Opcional)</label>
-              <input
-                type="number"
-                name="horometroProyectado"
-                placeholder="Ej. 600 (estimado al momento de entrar al taller)"
-                value={formData.horometroProyectado}
-                onChange={handleChange}
-              />
-            </div>
-
-            {/* TAREAS / DETALLE PROGRAMADO */}
-            <div className="form-group-item full-width">
-              <label>Lista de Tareas e Insumos Programados</label>
-              <textarea
-                name="tareas"
-                rows={3}
-                value={formData.tareas}
-                onChange={handleChange}
-                className="textarea-field"
-                placeholder="Especifica los repuestos, filtros y procedimientos..."
-              />
+              <div className="form-group-item full-width">
+                <label>Lista de Tareas e Insumos Programados</label>
+                <textarea
+                  name="tareas"
+                  rows={3}
+                  value={formData.tareas}
+                  onChange={handleChange}
+                  className="textarea-field"
+                  placeholder="Detalla los procedimientos, repuestos y filtros a cambiar..."
+                />
+              </div>
             </div>
           </div>
 

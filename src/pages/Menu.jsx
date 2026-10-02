@@ -112,7 +112,10 @@ export default function Menu() {
       )}
 
       {activeTab === "dashboard" && (
-        <DashboardView onNavigate={handleNavigate} />
+        <DashboardView
+          onNavigate={handleNavigate}
+          initialSection={subOption || "operaciones"}
+        />
       )}
 
       {activeTab === "operaciones" && (
@@ -134,7 +137,12 @@ export default function Menu() {
         />
       )}
 
-      {activeTab === "mantenimiento" && <MantenimientoView />}
+      {activeTab === "mantenimiento" && (
+        <DashboardView
+          onNavigate={handleNavigate}
+          initialSection="mantenimiento"
+        />
+      )}
 
       {activeTab === "reportes" && (
         <ReportesView initialCategory={subOption || "todos"} />

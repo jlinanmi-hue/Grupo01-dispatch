@@ -1704,13 +1704,16 @@ body, html {
   color: #FFFFFF;
 }
 
-/* MODAL REGISTRAR EQUIPO & FICHA TÉCNICA */
+/* MODAL REGISTRAR EQUIPO, MANTENIMIENTO PREVENTIVO & CORRECTIVO */
 .modal-card-detail.modal-registrar-equipo,
-.modal-card-detail.modal-detalle-equipo {
-  max-width: 680px !important;
-  width: min(680px, 94vw) !important;
+.modal-card-detail.modal-detalle-equipo,
+.modal-card-detail.modal-preventivo-enhanced,
+.modal-card-detail.modal-correctivo-enhanced,
+.modal-card-detail.modal-detalle-orden {
+  max-width: 800px !important;
+  width: min(800px, 95vw) !important;
   box-sizing: border-box !important;
-  padding: 32px 34px !important;
+  padding: 34px 38px !important;
   border-radius: 24px;
   overflow-y: auto;
   max-height: 90vh;
@@ -1753,15 +1756,62 @@ body, html {
 .modal-form-body {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
   width: 100%;
   box-sizing: border-box;
+}
+
+/* AGRUPACIONES POR SECCIONES DENTRO DEL MODAL */
+.modal-form-section {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.modal-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid #E2E8F0;
+  padding-bottom: 10px;
+}
+
+.section-step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1A3BBD;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.section-step-num.alert-step {
+  background: #EA580C;
+}
+
+.modal-section-header h4 {
+  margin: 0;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #0F172A;
+  letter-spacing: -0.2px;
 }
 
 .modal-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px 20px;
+  gap: 18px 22px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -1769,7 +1819,7 @@ body, html {
 .form-group-item {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
   min-width: 0;
   width: 100%;
   box-sizing: border-box;
@@ -1781,13 +1831,17 @@ body, html {
 }
 
 .form-group-item label {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 700;
-  color: #334155;
+  color: #1E293B;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .form-group-item label .req {
   color: #DC2626;
+  margin-left: 2px;
 }
 
 .form-group-item input,
@@ -1797,8 +1851,8 @@ body, html {
   max-width: 100% !important;
   box-sizing: border-box !important;
   min-width: 0 !important;
-  height: 44px;
-  background: #F8FAFC;
+  height: 46px;
+  background: #FFFFFF;
   border: 1.5px solid #CBD5E1;
   padding: 0 14px;
   border-radius: 10px;
@@ -1809,6 +1863,50 @@ body, html {
   transition: all 0.15s ease;
 }
 
+.form-group-item textarea.textarea-field {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #0F172A;
+  outline: none;
+  line-height: 1.45;
+  resize: vertical;
+  min-height: 75px;
+  transition: all 0.15s ease;
+}
+
+.form-group-item textarea.textarea-field:focus {
+  border-color: #1A3BBD;
+  box-shadow: 0 0 0 3px rgba(26, 59, 189, 0.12);
+}
+
+.field-hint-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  color: #1E40AF;
+  width: fit-content;
+}
+
+.field-hint-text {
+  font-size: 11px;
+  color: #64748B;
+  font-style: italic;
+  margin-top: 2px;
+}
+
 .form-group-item input:focus,
 .form-group-item select:focus,
 .form-group-item .select-field:focus {
@@ -1817,7 +1915,8 @@ body, html {
   box-shadow: 0 0 0 3px rgba(26, 59, 189, 0.12);
 }
 
-.form-group-item input.input-error {
+.form-group-item input.input-error,
+.form-group-item textarea.input-error {
   border-color: #EF4444;
   background: #FEF2F2;
 }
@@ -4318,27 +4417,28 @@ body, html {
   height: 17px;
 }
 
-/* KPI GRID */
+/* KPI GRID DE MANTENIMIENTO */
 .mantenimiento-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 18px;
 }
 
 .mant-kpi-card {
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
-  border-radius: 16px;
-  padding: 18px 20px;
+  border-radius: 18px;
+  padding: 20px 22px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.02);
   transition: var(--transition-smooth);
 }
 
 .mant-kpi-card:hover {
   border-color: #CBD5E1;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
 }
 
 .mant-kpi-card.highlight-preventive {
@@ -4358,7 +4458,7 @@ body, html {
 }
 
 .mant-kpi-lbl {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   color: #64748B;
   text-transform: uppercase;
@@ -4381,7 +4481,7 @@ body, html {
 .mant-kpi-value.text-green { color: #059669; }
 
 .mant-kpi-desc {
-  font-size: 11.5px;
+  font-size: 12px;
   color: #64748B;
 }
 
@@ -4407,11 +4507,11 @@ body, html {
   background: #FFFFFF;
   border: 1px solid #E2E8F0;
   border-radius: 20px;
-  padding: 24px 28px;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
+  padding: 26px 30px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 
 .versus-header-row {
@@ -4424,7 +4524,7 @@ body, html {
 
 .versus-title {
   margin: 0;
-  font-size: 17px;
+  font-size: 17.5px;
   font-weight: 800;
   color: #0F172A;
 }
@@ -4465,7 +4565,7 @@ body, html {
 .versus-bar-container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
 
 .versus-stats-row {
@@ -4506,12 +4606,13 @@ body, html {
 
 .versus-progress-track {
   width: 100%;
-  height: 26px;
+  height: 34px;
   background: #F1F5F9;
   border-radius: 9999px;
   overflow: hidden;
   display: flex;
-  border: 1px solid #E2E8F0;
+  border: 1.5px solid #E2E8F0;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .versus-bar-fill {
@@ -4519,10 +4620,11 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 800;
   color: #FFFFFF;
   transition: width 0.4s ease;
+  letter-spacing: 0.3px;
 }
 
 .versus-bar-fill.preventive-fill {
@@ -4543,10 +4645,88 @@ body, html {
   gap: 8px;
   background: #F8FAFC;
   border: 1px solid #E2E8F0;
-  border-radius: 10px;
-  padding: 8px 14px;
-  font-size: 12px;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 12.5px;
   color: #334155;
+}
+
+/* ==========================================================================
+   BARRA DE PESTAÑAS O SECCIONES DENTRO DEL DASHBOARD
+   ========================================================================== */
+.dashboard-section-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  padding: 6px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+  width: fit-content;
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+
+.dashboard-section-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboard-section-tab-btn svg {
+  width: 18px;
+  height: 18px;
+  color: #64748B;
+  transition: color 0.2s ease;
+}
+
+.dashboard-section-tab-btn:hover {
+  background: #F8FAFC;
+  color: #0F172A;
+}
+
+.dashboard-section-tab-btn:hover svg {
+  color: #1A3BBD;
+}
+
+.dashboard-section-tab-btn.active {
+  background: #1A3BBD;
+  color: #FFFFFF;
+  border-color: #1A3BBD;
+  box-shadow: 0 4px 12px rgba(26, 59, 189, 0.25);
+}
+
+.dashboard-section-tab-btn.active svg {
+  color: #FFFFFF;
+}
+
+.section-tab-badge {
+  background: #FFF7ED;
+  color: #C2410C;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  border: 1px solid #FFEDD5;
+  margin-left: 4px;
+}
+
+.dashboard-section-tab-btn.active .section-tab-badge {
+  background: #EA580C;
+  color: #FFFFFF;
+  border-color: transparent;
 }
 
 .diagnosis-pill strong {
